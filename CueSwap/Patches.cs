@@ -2,7 +2,6 @@ using System.Reflection;
 using System.Reflection.Emit;
 using CueSwapGenerator;
 using HarmonyLib;
-using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Buildings;
 using StardewValley.Locations;
@@ -11,6 +10,17 @@ using StardewValley.Objects;
 using static StardewValley.Menus.ItemGrabMenu;
 
 namespace CueSwap;
+
+/// <summary>
+/// [CueSwapTranspiler(
+//     nameof(OpCodes.Callvirt), // opcode of a sound call or assignment
+//     nameof(GameLocation), // type
+//     nameof(GameLocation.localSound), // method
+//     7, // distance between ldstr and sound call, exclusive on both ends
+//     "doorCreak", // sound cue str
+//     "doorCreak.ShippingBin" // new cue str
+// )]
+/// </summary>
 
 // shipping bin building
 [CueSwapTranspiler(
@@ -86,6 +96,15 @@ namespace CueSwap;
     0,
     "Ship",
     "Ship.MiniBin"
+)]
+// intro menu click on CA sound
+[CueSwapTranspiler(
+    nameof(OpCodes.Call),
+    nameof(Game1),
+    nameof(Game1.playSound),
+    30,
+    "Duck",
+    "Duck.Intro"
 )]
 internal static partial class Patches
 {
@@ -206,6 +225,15 @@ internal static partial class Patches
             )
         );
 #endif
+
+        TranspileWithLog(harmony, AccessTools.DeclaredMethod(
+            typeof(TitleMenu),
+            nameof(TitleMenu.receiveLeftClick)),
+            new HarmonyMethod(
+                typeof(Patches),
+                nameof(T_Game1_playSound_Duck_DuckIntro)
+            )
+        );
     }
 
     internal static void TranspileWithLog(

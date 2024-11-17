@@ -27,4 +27,90 @@ Additional sound cue replacements must be manually added to this mod, if you hav
 
 The debug build provide verbose logging of when the sound replacement happens, and provides the console command play_sound \<cue\> for playing cues by name.
 
-Transpiler methods in this mod are written with a source generator. The generated source can be viewed in `CueSwap/obj/Debug/net6.0/generated/CueSwapGenerator/CueSwapGenerator.CueSwapTranspilerGenerator` once you do a build.
+## How to Add Another Cue
+
+You need to edit the file named `CueSwap/Patches.cs`. This will require you to read the game's decompile and IL through ILSpy or similar.
+
+1. Find place to patch, e.g. for shipping bin open:
+```cs
+private void openShippingBinLid()
+{
+    if (shippingBinLid != null)
+    {
+        if (shippingBinLid.pingPongMotion != 1 && IsInCurrentLocation())
+        {
+            // this is what we want to change, using a transpiler
+            Game1.currentLocation.localSound("doorCreak");
+        }
+        shippingBinLid.pingPongMotion = 1;
+        shippingBinLid.paused = false;
+    }
+}
+```
+Then, find the corresponding bit of IL `Game1.currentLocation.localSound("doorCreak");`:
+```ini
+    call class StardewValley.GameLocation StardewValley.Game1::get_currentLocation()
+    ldstr "doorCreak"
+    # we need to add a shim here that will attempt to use a new cue if it exists
+    ldloca.s 0
+    initobj valuetype [System.Runtime]System.Nullable`1<valuetype [MonoGame.Framework]Microsoft.Xna.Framework.Vector2>
+    ldloc.0
+    ldloca.s 1
+    initobj valuetype [System.Runtime]System.Nullable`1<int32>
+    ldloc.1
+    ldc.i4.0
+    # this is the call that we will use to match, note that there are 7 IL between this and ldstr "doorCreak"
+    callvirt instance void StardewValley.GameLocation::localSound(string, valuetype [System.Runtime]System.Nullable`1<valuetype [MonoGame.Framework]Microsoft.Xna.Framework.Vector2>, valuetype [System.Runtime]System.Nullable`1<int32>, valuetype StardewValley.Audio.SoundContext)
+```
+This is same as typical starting point of transpiler.
+
+2. An attribute for generating the transpiler
+```cs
+// attribute name
+[CueSwapTranspiler(
+    // Str values for Opcode, Type, and Method name, needed to find callvirt instance void StardewValley.GameLocation::localSound
+    nameof(OpCodes.Callvirt),
+    nameof(GameLocation),
+    nameof(GameLocation.localSound),
+    // number of IL between ldstr "doorCreak" and callvirt instance void StardewValley.GameLocation::localSound
+    7,
+    // original cue name
+    "doorCreak",
+    // new cue name
+    "doorCreak.ShippingBin"
+)]
+// this class will have many attributes on it
+internal static partial class Patches
+{
+...
+```
+This generates the method `Patches.T_GameLocation_localSound_doorCreak_doorCreakShippingBin`, which can be viewed in `CueSwap/obj/Debug/net6.0/generated/CueSwapGenerator/CueSwapGenerator.CueSwapTranspilerGenerator` once you do a build.
+
+3. Add call to `harmony.Patch`, just like normal transpiler
+```cs
+internal static void Patch(string modId)
+{
+    ...
+    TranspileWithLog(
+        harmony,
+        AccessTools.DeclaredMethod(typeof(ShippingBin), "openShippingBinLid"),
+        new HarmonyMethod(
+            typeof(Patches),
+            nameof(T_GameLocation_localSound_doorCreak_doorCreakShippingBin)
+        )
+    );
+    ...
+}
+// helper method, does logging before calling harmony.Patch
+internal static void TranspileWithLog(
+    Harmony harmony,
+    MethodBase original,
+    HarmonyMethod transpiler
+)
+{
+    ModEntry.Log(
+        $"Patch '{original.DeclaringType?.Name}.{original.Name}' with '{transpiler.method.DeclaringType?.Name}.{transpiler.method.Name}'"
+    );
+    harmony.Patch(original: original, transpiler: transpiler);
+}
+```
