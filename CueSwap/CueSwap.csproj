@@ -37,8 +37,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Leclair.Stardew.ModManifestBuilder" Version="2.3.1" />
-    <PackageReference Include="Pathoschild.Stardew.ModBuildConfig" Version="4.3.1" />
+    <PackageReference Include="Leclair.Stardew.ModManifestBuilder" Version="2.4.0" />
+    <PackageReference Include="Pathoschild.Stardew.ModBuildConfig" Version="4.3.2" />
   </ItemGroup>
 
 </Project>
