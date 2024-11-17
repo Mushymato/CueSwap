@@ -11,30 +11,48 @@ internal record GenMethodModel(string Op, string TargetCls, string TargetMethod,
     internal string Op = Op;
     internal string TargetCls = TargetCls;
     internal string TargetMethod = TargetMethod;
+    internal string TargetArgs = "";
     internal int ArgOffset = ArgOffset;
     internal string OldCue = OldCue;
     internal string NewCue = NewCue;
+    internal string GeneratedMethodName = Regex.Replace($"T_{TargetCls}_{TargetMethod.Split(' ')[0]}_{OldCue}_{NewCue}", @"[./\\-]", "");
 
-    internal string Access
-    {
-        get => Op switch
-        {
-            "Call" => "AccessTools.DeclaredMethod",
-            "Callvirt" => "AccessTools.DeclaredMethod",
-            "Stfld" => "AccessTools.DeclaredField",
-            _ => throw new NotImplementedException(),
-        };
-    }
-
-    internal string GeneratedMethodName
+    internal string TargetOperand
     {
         get
         {
-            string methodName = $"T_{TargetCls}_{TargetMethod}_{OldCue}_{NewCue}";
-            return Regex.Replace(methodName, @"[./\\-]", "");
+            StringBuilder sb = new("AccessTools.");
+            sb.Append(Op switch
+            {
+                "Call" => "DeclaredMethod",
+                "Callvirt" => "DeclaredMethod",
+                "Stfld" => "DeclaredField",
+                _ => throw new NotImplementedException(),
+            });
+            sb.Append("(typeof(");
+            sb.Append(TargetCls);
+            sb.Append("), \"");
+            string[] methodParts = TargetMethod.Split(' ');
+            sb.Append(methodParts[0]);
+            sb.Append("\"");
+            if (methodParts.Length > 1)
+            {
+                sb.Append(", [");
+                for (int i = 1; i < methodParts.Length; i++)
+                {
+                    sb.Append("typeof(");
+                    sb.Append(methodParts[i]);
+                    if (i == methodParts.Length - 1)
+                        sb.Append(")");
+                    else
+                        sb.Append("), ");
+                }
+                sb.Append("]");
+            }
+            sb.Append(")");
+            return sb.ToString();
         }
     }
-
 }
 
 internal record GenClassModel(string Namespace, string ClassName, List<GenMethodModel> MethodModels, bool Debug)
@@ -144,7 +162,7 @@ $$"""
                     srcBuilder.Append(" new(),");
                 srcBuilder.Append(
 $$"""
- new(OpCodes.{{model.Op}}, {{model.Access}}(typeof({{model.TargetCls}}), "{{model.TargetMethod}}"))])
+ new(OpCodes.{{model.Op}}, {{model.TargetOperand}})])
                 .Repeat(
                     matchAction: (rmatch) =>
                     {

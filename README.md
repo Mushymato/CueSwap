@@ -84,7 +84,10 @@ internal static partial class Patches
 {
 ...
 ```
+
 This generates the method `Patches.T_GameLocation_localSound_doorCreak_doorCreakShippingBin`, which can be viewed in `CueSwap/obj/Debug/net6.0/generated/CueSwapGenerator/CueSwapGenerator.CueSwapTranspilerGenerator` once you do a build.
+
+If you need to match against a particular overload, do `$"{nameof(Game1.playSound)} string int"` with a space deliminated list of type names. following the method name.
 
 3. Add call to `harmony.Patch`, just like normal transpiler
 ```cs

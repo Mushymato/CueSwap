@@ -28,7 +28,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <DefineConstants>SHIPPING_BIN;MINI_SHIPPING_BIN;ISLAND_SHIPPING_BIN</DefineConstants>
+    <DefineConstants>SHIPPING_BIN;MINI_SHIPPING_BIN;ISLAND_SHIPPING_BIN;INTRO</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>

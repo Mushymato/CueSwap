@@ -101,8 +101,8 @@ namespace CueSwap;
 [CueSwapTranspiler(
     nameof(OpCodes.Call),
     nameof(Game1),
-    nameof(Game1.playSound),
-    30,
+    $"{nameof(Game1.playSound)} string int",
+    26,
     "Duck",
     "Duck.Intro"
 )]
@@ -226,14 +226,13 @@ internal static partial class Patches
         );
 #endif
 
-        TranspileWithLog(harmony, AccessTools.DeclaredMethod(
-            typeof(TitleMenu),
-            nameof(TitleMenu.receiveLeftClick)),
-            new HarmonyMethod(
-                typeof(Patches),
-                nameof(T_Game1_playSound_Duck_DuckIntro)
-            )
+#if INTRO
+        TranspileWithLog(
+            harmony,
+            AccessTools.DeclaredMethod(typeof(TitleMenu), nameof(TitleMenu.receiveLeftClick)),
+            new HarmonyMethod(typeof(Patches), nameof(T_Game1_playSound_Duck_DuckIntro))
         );
+#endif
     }
 
     internal static void TranspileWithLog(
