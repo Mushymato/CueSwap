@@ -3,10 +3,12 @@ using System.Reflection.Emit;
 using CueSwapGenerator;
 using HarmonyLib;
 using StardewValley;
+using StardewValley.BellsAndWhistles;
 using StardewValley.Buildings;
 using StardewValley.Locations;
 using StardewValley.Menus;
 using StardewValley.Objects;
+using StardewValley.TerrainFeatures;
 using static StardewValley.Menus.ItemGrabMenu;
 
 namespace CueSwap;
@@ -106,6 +108,39 @@ namespace CueSwap;
     "Duck",
     "Duck.Intro"
 )]
+// treethud: stump, tree/fruitree fall, bush, parrot
+[CueSwapTranspiler(
+    nameof(OpCodes.Callvirt),
+    nameof(GameLocation),
+    nameof(GameLocation.playSound),
+    7,
+    "treethud",
+    "treethud.StumpFall"
+)]
+[CueSwapTranspiler(
+    nameof(OpCodes.Callvirt),
+    nameof(GameLocation),
+    nameof(GameLocation.localSound),
+    7,
+    "treethud",
+    "treethud.TreeFall"
+)]
+[CueSwapTranspiler(
+    nameof(OpCodes.Callvirt),
+    nameof(GameLocation),
+    nameof(GameLocation.playSound),
+    6,
+    "treethud",
+    "treethud.BushFall"
+)]
+[CueSwapTranspiler(
+    nameof(OpCodes.Call),
+    nameof(Game1),
+    $"{nameof(Game1.playSound)} string int",
+    3,
+    "treethud",
+    "treethud.ParrotPlatform"
+)]
 internal static partial class Patches
 {
     internal static void Patch(string modId)
@@ -116,10 +151,7 @@ internal static partial class Patches
         TranspileWithLog(
             harmony,
             AccessTools.DeclaredMethod(typeof(ShippingBin), "openShippingBinLid"),
-            new HarmonyMethod(
-                typeof(Patches),
-                nameof(T_GameLocation_localSound_doorCreak_doorCreakShippingBin)
-            )
+            new HarmonyMethod(typeof(Patches), nameof(T_GameLocation_localSound_doorCreak_doorCreakShippingBin))
         );
         TranspileWithLog(
             harmony,
@@ -132,10 +164,7 @@ internal static partial class Patches
         TranspileWithLog(
             harmony,
             AccessTools.DeclaredMethod(typeof(ShippingBin), nameof(ShippingBin.showShipment)),
-            new HarmonyMethod(
-                typeof(Patches),
-                nameof(T_DelayedAction_playSoundAfterDelay_Ship_ShipShippingBin)
-            )
+            new HarmonyMethod(typeof(Patches), nameof(T_DelayedAction_playSoundAfterDelay_Ship_ShipShippingBin))
         );
 #endif
 
@@ -144,10 +173,7 @@ internal static partial class Patches
         TranspileWithLog(
             harmony,
             AccessTools.DeclaredMethod(typeof(IslandWest), "openShippingBinLid"),
-            new HarmonyMethod(
-                typeof(Patches),
-                nameof(T_GameLocation_localSound_doorCreak_doorCreakIslandBin)
-            )
+            new HarmonyMethod(typeof(Patches), nameof(T_GameLocation_localSound_doorCreak_doorCreakIslandBin))
         );
         TranspileWithLog(
             harmony,
@@ -160,19 +186,13 @@ internal static partial class Patches
         TranspileWithLog(
             harmony,
             AccessTools.DeclaredMethod(typeof(IslandWest), nameof(IslandWest.showShipment)),
-            new HarmonyMethod(
-                typeof(Patches),
-                nameof(T_DelayedAction_playSoundAfterDelay_Ship_ShipIslandBin)
-            )
+            new HarmonyMethod(typeof(Patches), nameof(T_DelayedAction_playSoundAfterDelay_Ship_ShipIslandBin))
         );
         // this seems to be old shipping bin, unsure why islandwest still use it
         TranspileWithLog(
             harmony,
             AccessTools.DeclaredMethod(typeof(Farm), nameof(Farm.showShipment)),
-            new HarmonyMethod(
-                typeof(Patches),
-                nameof(T_DelayedAction_playSoundAfterDelay_Ship_ShipIslandBin)
-            )
+            new HarmonyMethod(typeof(Patches), nameof(T_DelayedAction_playSoundAfterDelay_Ship_ShipIslandBin))
         );
 #endif
 
@@ -181,10 +201,7 @@ internal static partial class Patches
         TranspileWithLog(
             harmony,
             AccessTools.DeclaredMethod(typeof(Chest), nameof(Chest.UpdateFarmerNearby)),
-            new HarmonyMethod(
-                typeof(Patches),
-                nameof(T_GameLocation_localSound_doorCreak_doorCreakMiniBin)
-            )
+            new HarmonyMethod(typeof(Patches), nameof(T_GameLocation_localSound_doorCreak_doorCreakMiniBin))
         );
         TranspileWithLog(
             harmony,
@@ -219,10 +236,7 @@ internal static partial class Patches
                     typeof(bool),
                 ]
             ),
-            new HarmonyMethod(
-                typeof(Patches),
-                nameof(T_InventoryMenu_moveItemSound_Ship_ShipMiniBin)
-            )
+            new HarmonyMethod(typeof(Patches), nameof(T_InventoryMenu_moveItemSound_Ship_ShipMiniBin))
         );
 #endif
 
@@ -233,13 +247,37 @@ internal static partial class Patches
             new HarmonyMethod(typeof(Patches), nameof(T_Game1_playSound_Duck_DuckIntro))
         );
 #endif
+
+#if TREETHUD
+        TranspileWithLog(
+            harmony,
+            AccessTools.DeclaredMethod(typeof(Tree), nameof(Tree.tickUpdate)),
+            new HarmonyMethod(typeof(Patches), nameof(T_GameLocation_localSound_treethud_treethudTreeFall))
+        );
+        TranspileWithLog(
+            harmony,
+            AccessTools.DeclaredMethod(typeof(FruitTree), nameof(FruitTree.tickUpdate)),
+            new HarmonyMethod(typeof(Patches), nameof(T_GameLocation_localSound_treethud_treethudTreeFall))
+        );
+        TranspileWithLog(
+            harmony,
+            AccessTools.DeclaredMethod(typeof(Tree), "performTreeFall"),
+            new HarmonyMethod(typeof(Patches), nameof(T_GameLocation_playSound_treethud_treethudStumpFall))
+        );
+        TranspileWithLog(
+            harmony,
+            AccessTools.DeclaredMethod(typeof(Bush), nameof(Bush.performToolAction)),
+            new HarmonyMethod(typeof(Patches), nameof(T_GameLocation_playSound_treethud_treethudBushFall))
+        );
+        TranspileWithLog(
+            harmony,
+            AccessTools.DeclaredMethod(typeof(ParrotPlatform), nameof(ParrotPlatform.Update)),
+            new HarmonyMethod(typeof(Patches), nameof(T_Game1_playSound_treethud_treethudParrotPlatform))
+        );
+#endif
     }
 
-    internal static void TranspileWithLog(
-        Harmony harmony,
-        MethodBase original,
-        HarmonyMethod transpiler
-    )
+    internal static void TranspileWithLog(Harmony harmony, MethodBase original, HarmonyMethod transpiler)
     {
         ModEntry.Log(
             $"Patch '{original.DeclaringType?.Name}.{original.Name}' with '{transpiler.method.DeclaringType?.Name}.{transpiler.method.Name}'"

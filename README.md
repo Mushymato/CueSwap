@@ -21,11 +21,34 @@ This mod helps mod authors change certain sound cues in the game without changin
 - doorCreakReverse &rArr; doorCreakReverse.IslandBin
 - Ship &rArr; Ship.IslandBin
 
+### Intro
+- Duck &rArr; Duck.Intro
+
+### Wild Tree
+- treethud &rArr; treethud.TreeFall (when the tree falls down after chop)
+- treethud &rArr; treethud.StumpFall (when the stump is chopped)
+
+### Fruit Tree
+- treethud &rArr; treethud.TreeFall (when the tree falls down after chop, intentionally same as wild tree)
+
+### Bush
+- treethud &rArr; treethud.BushFall (when bush is chopped)
+
+### Parrot Platform
+- treethud &rArr; treethud.ParrotPlatform (this is the parrot takeoff sound)
+
 Additional sound cue replacements must be manually added to this mod, if you have a need for any particular sound please let me know and I'll look into adding it.
+
+## Useful Console Commands
+
+These are both base game console commands, listed here because they are helpful.
+
+- `debug ps <cue> <pitch>`: Plays a certain sound cue with a certain pitch.
+- `debug logsounds <cue> <pitch>`: Begin logging all sound cues, you can use this to find out what cue might need replacing.
 
 ## Modder Features
 
-The debug build provide verbose logging of when the sound replacement happens, and provides the console command play_sound \<cue\> for playing cues by name.
+The debug build provide verbose logging of when the sound replacement happens.
 
 ## How to Add Another Cue
 

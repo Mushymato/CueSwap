@@ -1,5 +1,4 @@
 using StardewModdingAPI;
-using StardewValley;
 
 namespace CueSwap;
 
@@ -16,22 +15,7 @@ public class ModEntry : Mod
     {
         mon = Monitor;
         Patches.Patch(ModManifest.UniqueID);
-
-#if DEBUG
-        helper.ConsoleCommands.Add("play_sound", "Play a sound cue.", ConsolePlaySound);
-#endif
     }
-
-#if DEBUG
-    private void ConsolePlaySound(string command, string[] args)
-    {
-        if (args.Any())
-        {
-            Log($"playSound: {args[0]}");
-            Game1.playSound(args[0]);
-        }
-    }
-#endif
 
     /// <summary>SMAPI static monitor Log wrapper</summary>
     /// <param name="msg"></param>
