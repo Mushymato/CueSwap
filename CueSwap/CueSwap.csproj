@@ -27,10 +27,6 @@
     <PathMap>$([System.IO.Path]::GetFullPath('$(MSBuildProjectDirectory)/..'))=mushymato/</PathMap>
   </PropertyGroup>
 
-  <PropertyGroup>
-    <DefineConstants>SHIPPING_BIN;INTRO;TREETHUD;EARTHQUAKE;PEPPER_REX</DefineConstants>
-  </PropertyGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\CueSwapGenerator\CueSwapGenerator.csproj"
       OutputItemType="Analyzer" ReferenceOutputAssembly="false" />

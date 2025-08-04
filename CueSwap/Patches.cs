@@ -167,12 +167,20 @@ namespace CueSwap;
     "furnace",
     "furnace.DinoMonster"
 )]
+[CueSwapTranspiler(
+    nameof(OpCodes.Callvirt),
+    nameof(GameLocation),
+    nameof(GameLocation.localSound),
+    7,
+    "fireball",
+    "fireball.Fireplace"
+)]
 internal static partial class Patches
 {
     internal static void Patch(string modId)
     {
         Harmony harmony = new(modId);
-#if SHIPPING_BIN
+        #region SHIPPING_BIN
         // shipping bin building
         TranspileWithLog(
             harmony,
@@ -258,17 +266,17 @@ internal static partial class Patches
             ),
             new HarmonyMethod(typeof(Patches), nameof(T_InventoryMenu_moveItemSound_Ship_ShipMiniBin))
         );
-#endif
+        #endregion
 
-#if INTRO
+        #region INTRO
         TranspileWithLog(
             harmony,
             AccessTools.DeclaredMethod(typeof(TitleMenu), nameof(TitleMenu.receiveLeftClick)),
             new HarmonyMethod(typeof(Patches), nameof(T_Game1_playSound_Duck_DuckIntro))
         );
-#endif
+        #endregion
 
-#if TREETHUD
+        #region TREETHUD
         TranspileWithLog(
             harmony,
             AccessTools.DeclaredMethod(typeof(Tree), nameof(Tree.tickUpdate)),
@@ -294,9 +302,9 @@ internal static partial class Patches
             AccessTools.DeclaredMethod(typeof(ParrotPlatform), nameof(ParrotPlatform.Update)),
             new HarmonyMethod(typeof(Patches), nameof(T_Game1_playSound_treethud_treethudParrotPlatform))
         );
-#endif
+        #endregion
 
-#if EARTHQUAKE
+        #region EARTHQUAKE
         TranspileWithLog(
             harmony,
             AccessTools.DeclaredMethod(typeof(SoundInTheNightEvent), nameof(SoundInTheNightEvent.setUp)),
@@ -305,9 +313,9 @@ internal static partial class Patches
                 nameof(T_SoundInTheNightEvent_soundName_thunder_small_thunder_smallEarthquake)
             )
         );
-#endif
+        #endregion
 
-#if PEPPER_REX
+        #region PEPPER_REX
         TranspileWithLog(
             harmony,
             AccessTools.DeclaredMethod(typeof(DinoMonster), nameof(DinoMonster.behaviorAtGameTick)),
@@ -318,7 +326,20 @@ internal static partial class Patches
             AccessTools.DeclaredMethod(typeof(DinoMonster), nameof(DinoMonster.behaviorAtGameTick)),
             new HarmonyMethod(typeof(Patches), nameof(T_GameLocation_playSound_croak_croakDinoMonster))
         );
-#endif
+        #endregion
+
+        #region FIREPLACE
+        TranspileWithLog(
+            harmony,
+            AccessTools.DeclaredMethod(typeof(GameLocation), nameof(GameLocation.setFireplace)),
+            new HarmonyMethod(typeof(Patches), nameof(T_GameLocation_localSound_fireball_fireballFireplace))
+        );
+        TranspileWithLog(
+            harmony,
+            AccessTools.DeclaredMethod(typeof(Furniture), nameof(Furniture.setFireplace)),
+            new HarmonyMethod(typeof(Patches), nameof(T_GameLocation_localSound_fireball_fireballFireplace))
+        );
+        #endregion
     }
 
     internal static void TranspileWithLog(Harmony harmony, MethodBase original, HarmonyMethod transpiler)
