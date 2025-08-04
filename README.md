@@ -37,6 +37,16 @@ This mod helps mod authors change certain sound cues in the game without changin
 ### Parrot Platform
 - treethud &rArr; treethud.ParrotPlatform (this is the parrot takeoff sound)
 
+### Sound In the Night
+- thunder_small &rArr; thunder_small.Earthquake (day 31 railroad unlock)
+
+### Dino Monster (Pepper Rex)
+- croak &rArr; croak.DinoMonster
+- furnace &rArr; furnace.DinoMonster
+
+### Fireplace
+- fireball &rArr; fireball.Fireplace
+
 Additional sound cue replacements must be manually added to this mod, if you have a need for any particular sound please let me know and I'll look into adding it.
 
 ## Useful Console Commands
