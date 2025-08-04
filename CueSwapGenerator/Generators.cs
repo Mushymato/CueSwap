@@ -121,11 +121,13 @@ public class CueSwapTranspilerAttribute(string Op, string TargetCls, string Targ
         {
             StringBuilder srcBuilder = new(
 $$"""
+using System.Reflection;
 using System.Reflection.Emit;
 using HarmonyLib;
 using StardewModdingAPI;
 using StardewValley;
 using StardewValley.Menus;
+using StardewValley.Events;
 
 namespace {{clsModel.Namespace}};
 

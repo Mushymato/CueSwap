@@ -28,7 +28,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <DefineConstants>SHIPPING_BIN;MINI_SHIPPING_BIN;ISLAND_SHIPPING_BIN;INTRO;TREETHUD</DefineConstants>
+    <DefineConstants>SHIPPING_BIN;INTRO;TREETHUD;EARTHQUAKE;PEPPER_REX</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>

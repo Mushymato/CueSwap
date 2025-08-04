@@ -5,8 +5,10 @@ using HarmonyLib;
 using StardewValley;
 using StardewValley.BellsAndWhistles;
 using StardewValley.Buildings;
+using StardewValley.Events;
 using StardewValley.Locations;
 using StardewValley.Menus;
+using StardewValley.Monsters;
 using StardewValley.Objects;
 using StardewValley.TerrainFeatures;
 using static StardewValley.Menus.ItemGrabMenu;
@@ -141,6 +143,30 @@ namespace CueSwap;
     "treethud",
     "treethud.ParrotPlatform"
 )]
+[CueSwapTranspiler(
+    nameof(OpCodes.Stfld),
+    nameof(SoundInTheNightEvent),
+    "soundName",
+    0,
+    "thunder_small",
+    "thunder_small.Earthquake"
+)]
+[CueSwapTranspiler(
+    nameof(OpCodes.Callvirt),
+    nameof(GameLocation),
+    nameof(GameLocation.playSound),
+    7,
+    "croak",
+    "croak.DinoMonster"
+)]
+[CueSwapTranspiler(
+    nameof(OpCodes.Callvirt),
+    nameof(GameLocation),
+    nameof(GameLocation.playSound),
+    7,
+    "furnace",
+    "furnace.DinoMonster"
+)]
 internal static partial class Patches
 {
     internal static void Patch(string modId)
@@ -166,9 +192,6 @@ internal static partial class Patches
             AccessTools.DeclaredMethod(typeof(ShippingBin), nameof(ShippingBin.showShipment)),
             new HarmonyMethod(typeof(Patches), nameof(T_DelayedAction_playSoundAfterDelay_Ship_ShipShippingBin))
         );
-#endif
-
-#if ISLAND_SHIPPING_BIN
         // shipping bin for ginger island
         TranspileWithLog(
             harmony,
@@ -194,9 +217,6 @@ internal static partial class Patches
             AccessTools.DeclaredMethod(typeof(Farm), nameof(Farm.showShipment)),
             new HarmonyMethod(typeof(Patches), nameof(T_DelayedAction_playSoundAfterDelay_Ship_ShipIslandBin))
         );
-#endif
-
-#if MINI_SHIPPING_BIN
         // mini shipping bin chest
         TranspileWithLog(
             harmony,
@@ -273,6 +293,30 @@ internal static partial class Patches
             harmony,
             AccessTools.DeclaredMethod(typeof(ParrotPlatform), nameof(ParrotPlatform.Update)),
             new HarmonyMethod(typeof(Patches), nameof(T_Game1_playSound_treethud_treethudParrotPlatform))
+        );
+#endif
+
+#if EARTHQUAKE
+        TranspileWithLog(
+            harmony,
+            AccessTools.DeclaredMethod(typeof(SoundInTheNightEvent), nameof(SoundInTheNightEvent.setUp)),
+            new HarmonyMethod(
+                typeof(Patches),
+                nameof(T_SoundInTheNightEvent_soundName_thunder_small_thunder_smallEarthquake)
+            )
+        );
+#endif
+
+#if PEPPER_REX
+        TranspileWithLog(
+            harmony,
+            AccessTools.DeclaredMethod(typeof(DinoMonster), nameof(DinoMonster.behaviorAtGameTick)),
+            new HarmonyMethod(typeof(Patches), nameof(T_GameLocation_playSound_furnace_furnaceDinoMonster))
+        );
+        TranspileWithLog(
+            harmony,
+            AccessTools.DeclaredMethod(typeof(DinoMonster), nameof(DinoMonster.behaviorAtGameTick)),
+            new HarmonyMethod(typeof(Patches), nameof(T_GameLocation_playSound_croak_croakDinoMonster))
         );
 #endif
     }
