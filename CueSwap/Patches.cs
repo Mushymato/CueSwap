@@ -168,12 +168,20 @@ namespace CueSwap;
     "furnace.DinoMonster"
 )]
 [CueSwapTranspiler(
+    nameof(OpCodes.Call),
+    nameof(GameLocation),
+    nameof(GameLocation.localSound),
+    7,
+    "fireball",
+    "fireball.Fireplace1"
+)]
+[CueSwapTranspiler(
     nameof(OpCodes.Callvirt),
     nameof(GameLocation),
     nameof(GameLocation.localSound),
     7,
     "fireball",
-    "fireball.Fireplace"
+    "fireball.Fireplace2"
 )]
 internal static partial class Patches
 {
@@ -332,12 +340,12 @@ internal static partial class Patches
         TranspileWithLog(
             harmony,
             AccessTools.DeclaredMethod(typeof(GameLocation), nameof(GameLocation.setFireplace)),
-            new HarmonyMethod(typeof(Patches), nameof(T_GameLocation_localSound_fireball_fireballFireplace))
+            new HarmonyMethod(typeof(Patches), nameof(T_GameLocation_localSound_fireball_fireballFireplace1))
         );
         TranspileWithLog(
             harmony,
             AccessTools.DeclaredMethod(typeof(Furniture), nameof(Furniture.setFireplace)),
-            new HarmonyMethod(typeof(Patches), nameof(T_GameLocation_localSound_fireball_fireballFireplace))
+            new HarmonyMethod(typeof(Patches), nameof(T_GameLocation_localSound_fireball_fireballFireplace2))
         );
         #endregion
     }

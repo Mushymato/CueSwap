@@ -45,7 +45,8 @@ This mod helps mod authors change certain sound cues in the game without changin
 - furnace &rArr; furnace.DinoMonster
 
 ### Fireplace
-- fireball &rArr; fireball.Fireplace
+- fireball &rArr; fireball.Fireplace1 (gamelocation fireplace)
+- fireball &rArr; fireball.Fireplace2 (furniture fireplace)
 
 Additional sound cue replacements must be manually added to this mod, if you have a need for any particular sound please let me know and I'll look into adding it.
 
