@@ -5,6 +5,7 @@ using HarmonyLib;
 using StardewValley;
 using StardewValley.BellsAndWhistles;
 using StardewValley.Buildings;
+using StardewValley.Companions;
 using StardewValley.Events;
 using StardewValley.Locations;
 using StardewValley.Menus;
@@ -25,7 +26,6 @@ namespace CueSwap;
 //     "doorCreak.ShippingBin" // new cue str
 // )]
 /// </summary>
-
 // shipping bin building
 [CueSwapTranspiler(
     nameof(OpCodes.Callvirt),
@@ -182,6 +182,14 @@ namespace CueSwap;
     7,
     "fireball",
     "fireball.Fireplace2"
+)]
+[CueSwapTranspiler(
+    nameof(OpCodes.Callvirt),
+    nameof(GameLocation),
+    nameof(GameLocation.localSound),
+    7,
+    "parrot_squawk",
+    "parrot_squawk.ParrotEgg"
 )]
 internal static partial class Patches
 {
@@ -346,6 +354,14 @@ internal static partial class Patches
             harmony,
             AccessTools.DeclaredMethod(typeof(Furniture), nameof(Furniture.setFireplace)),
             new HarmonyMethod(typeof(Patches), nameof(T_GameLocation_localSound_fireball_fireballFireplace2))
+        );
+        #endregion
+
+        #region PARROT TRINKET
+        TranspileWithLog(
+            harmony,
+            AccessTools.DeclaredMethod(typeof(FlyingCompanion), nameof(FlyingCompanion.Update)),
+            new HarmonyMethod(typeof(Patches), nameof(T_GameLocation_localSound_parrot_squawk_parrot_squawkParrotEgg))
         );
         #endregion
     }
