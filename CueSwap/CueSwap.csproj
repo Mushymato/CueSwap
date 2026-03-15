@@ -17,7 +17,7 @@
     <Authors>mushymato</Authors>
     <Description>Swap sound cues in certain context.</Description>
     <UniqueId>mushymato.CueSwap</UniqueId>
-    <UpdateKeys>Nexus:29445</UpdateKeys>
+    <UpdateKeys>Nexus:29445,GitHub:Mushymato/CueSwap</UpdateKeys>
     <Version>1.1.1</Version>
     <BaseManifest>new</BaseManifest>
     <MinimumApiVersion_Behavior>Update</MinimumApiVersion_Behavior>
